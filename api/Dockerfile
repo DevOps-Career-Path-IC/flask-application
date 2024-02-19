@@ -18,6 +18,10 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+ENV DB_HOST=http://mysql
+
 COPY . .
 
-CMD ["python", "main.py"]
+ENTRYPOINT [ "python" ]
+
+CMD [ "main.py" ]

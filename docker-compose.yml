@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   api:
+    image: mycoolwebapp:$COMMIT_HASH
     build:
       context: api
       dockerfile: Dockerfile
