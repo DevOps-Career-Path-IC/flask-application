@@ -26,7 +26,7 @@ CORS(app=app)
 
 @app.route('/status')
 def status():
-  return jsonify({'message': 'OK', 'statusCode': '200'})
+  return jsonify({'message': 'OK!!!', 'statusCode': '200'})
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
