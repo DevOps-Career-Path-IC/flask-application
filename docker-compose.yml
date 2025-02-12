@@ -1,5 +1,9 @@
 version: "3.9"
 services:
+  test-runner:
+    build:
+      context: api
+    entrypoint: ["flake8"]
   api:
     image: mycoolwebapp:$COMMIT_HASH
     build:
