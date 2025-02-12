@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app/api
 
 COPY requirements.txt /app/api/requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && pip install flake8==7.1.1
 
 FROM python:3.9-slim
 

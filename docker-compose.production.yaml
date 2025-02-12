@@ -1,0 +1,18 @@
+services:
+  api:
+    image: 0rf1az/mycoolwebapp:${COMMIT_HASH:-latest}
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+    restart: on-failure:10
+    healthcheck:
+      test: curl --fail http://localhost:5000/api/users
+      start_period: 2s
+    networks:
+      - mycoolwebapp
+
+networks:
+  mycoolwebapp:
