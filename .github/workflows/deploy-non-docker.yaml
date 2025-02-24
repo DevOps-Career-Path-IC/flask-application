@@ -6,6 +6,11 @@ on:
 
 env:
   DEPLOYMENT_SERVER_IP: ${{ secrets.INSTANCE_IP }}
+  APP_PATH: /opt/flask_app
+  VENV_PATH: /opt/flask_app/venv
+  FLASK_APP: main.py
+  FLASK_ENV: production
+
 
 jobs:
   deploy:
@@ -24,22 +29,42 @@ jobs:
           --exclude="deploy.tar.gz" \
           --warning=no-file-changed \
           api
+      - name: Create systemd unit file for flask app
+        run: |
+          cat << EOF > flask_app.service
+          [Unit]
+          Description=Flask Application Service
+          After=network.target
+          
+          [Service]
+          Type=simple
+          WorkingDirectory=${APP_PATH}/api
+          Environment="PATH=${VENV_PATH}/bin"
+          Environment="FLASK_APP=${FLASK_APP}"
+          Environment="FLASK_ENV=production"
+          ExecStart=${VENV_PATH}/bin/gunicorn --workers 3 --bind 0.0.0.0:5000 main:app
+          Restart=always
+          
+          [Install]
+          WantedBy=multi-user.target
+          EOF
+
       - name: Transfer deploy archive file to VM
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ env.DEPLOYMENT_SERVER_IP }}
           username: ubuntu
           key: ${{ secrets.INSTANCE_RSA_PRIVATE_KEY }}
-          source: "deploy.tar.gz"
-          target: "~/"
-
-      # - name: Deploy mycoolwebapp package to VM
-      #   uses: appleboy/ssh-action@v1.2.0
-      #   with:
-      #     host: ${{ env.DEPLOYMENT_SERVER_IP }}
-      #     username: ubuntu
-      #     key: ${{ secrets.INSTANCE_RSA_PRIVATE_KEY }}
-      #     script: |
-      #       export COMMIT_HASH=$(echo ${{ github.sha }} | cut -c1-7)
-      #       docker compose -f docker-compose.production.yaml up -d
+          source: "deploy.tar.gz,deploy.sh,flask_app.service"
+          target: "/tmp"
+      
+      
+      - name: Deploy mycoolwebapp to VM
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.DEPLOYMENT_SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.INSTANCE_RSA_PRIVATE_KEY }}
+          script: |
+            bash /tmp/deploy.sh
 
