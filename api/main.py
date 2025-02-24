@@ -28,5 +28,11 @@ CORS(app=app)
 def status():
   return jsonify({'message': 'OK!!!', 'statusCode': '200'})
 
+
+@app.route('/hurray')
+def hurray():
+  return jsonify({'message': 'Hurray we made it!!!'})
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")
