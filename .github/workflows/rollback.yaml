@@ -1,0 +1,24 @@
+name: Rollback to previous versions
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        type: string
+        description: Commit hash/directory name/Image tag
+
+env:
+  DEPLOYMENT_SERVER_IP: ${{ secrets.INSTANCE_IP }}
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy mycoolwebapp using docker compose
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ env.DEPLOYMENT_SERVER_IP }}
+          username: ubuntu
+          key: ${{ secrets.INSTANCE_RSA_PRIVATE_KEY }}
+          script: |
+            export COMMIT_HASH=${{ inputs.release-version }}
+            docker compose -f docker-compose.production.yaml up -d
