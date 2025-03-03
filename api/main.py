@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 # from constants.common import CONFIGURATION
-from services.database import db
+#from services.database import db
 # from services.mysql import create_db_if_not_exists
 # from controllers.users import users_bp
 # from controllers.status import status_bp
