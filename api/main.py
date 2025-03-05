@@ -24,9 +24,10 @@ CORS(app=app)
 # app.register_blueprint(users_bp)
 # app.register_blueprint(status_bp)
 
+
 @app.route('/status')
 def status():
-  return jsonify({'message': 'OK!!!', 'statusCode': '200'})
+  return jsonify({'message': 'OK!', 'statusCode': '200'})
 
 
 @app.route('/hurray')
